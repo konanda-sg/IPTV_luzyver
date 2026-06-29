@@ -61,14 +61,10 @@ def fetch_all_channels() -> list[dict]:
                     continue
                 key = name.lower()
                 if key not in channels:
-                    raw_image = ch.get("image", "")
-                    logo = ""
-                    if raw_image:
-                        logo = raw_image.replace("https://cdnlivetv.tv/", "https://api.cdnlivetv.tv/").replace(".webp", ".png")
                     channels[key] = {
                         "name":  name,
                         "url":   ch.get("url", ""),
-                        "logo":  logo,
+                        "image": ch.get("image", ""),
                     }
     return sorted(list(channels.values()), key=lambda x: x["name"])
 
@@ -137,9 +133,8 @@ def main() -> None:
 
     playlist_lines = ["#EXTM3U\n"]
     for ch, m3u8_url in resolved_channels:
-        logo_str = f' tvg-logo="{ch["logo"]}"' if ch.get("logo") else ""
         playlist_lines.append(
-            f'#EXTINF:-1 tvg-name="{ch["name"]}"{logo_str} group-title="Sports",{ch["name"]}'
+            f'#EXTINF:-1 tvg-name="{ch["name"]}" group-title="Sports",{ch["name"]}'
         )
         playlist_lines.append(f"#EXTVLCOPT:http-user-agent={STREAM_UA}")
         playlist_lines.append(f"#EXTVLCOPT:http-referrer={STREAM_REFERER}")
